@@ -31,8 +31,6 @@ void memoize_free(memoize_cache_t *cache) {
 }
 
 int memoize_check(memoize_cache_t *cache, memoize_value_t data) {
-  // this works
-
   if (memoize_cache_size(cache) == 0) {
     if (memoize_debug_flag(cache) > 0) {
       printf("dbg: '%lld' not found; cache empty\n", data);
@@ -56,25 +54,18 @@ int memoize_check(memoize_cache_t *cache, memoize_value_t data) {
 }
 
 int memoize_insert(memoize_cache_t *cache, memoize_value_t data) {
-  // this does not work
-
   int cache_check_index = memoize_check(cache, data);
 
   if (cache_check_index == NOT_CACHED) {
-    // strange behavior: when attempting to add the second string, the string at
-    // index 0 is replaced by the new string
-    //
-    // adding entries manually line by line works as expected
-    // i.e.
-    // cache->data[0] = "23523";
-    // cache->data[1] = "6645";
-    // cache->data[2] = "44";
     cache->data[memoize_cache_size(cache)] = data;
     cache->size++;
   }
 
-  memoize_print_cache(cache); // remove later
-  return memoize_cache_size(cache) - 1;
+  if (memoize_debug_flag(cache) > 0) {
+    memoize_print_cache(cache);
+  }
+
+  return cache_check_index;
 }
 
 int memoize_cache_size(memoize_cache_t *cache) { return cache->size; }
